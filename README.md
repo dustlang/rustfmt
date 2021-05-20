@@ -1,4 +1,4 @@
-# rustfmt [![Linux badge][linux-build-status]][linux-build] [![Mac badge][mac-build-status]][mac-build] [![Windows badge][windows-build-status]][windows-build] [![crates.io badge][cratesio-badge]][cratesio-package] [![Travis config badge][travis-config-badge]][travis-config-job]
+# dustfmt [![Linux badge][linux-build-status]][linux-build] [![Mac badge][mac-build-status]][mac-build] [![Windows badge][windows-build-status]][windows-build] [![crates.io badge][cratesio-badge]][cratesio-package] [![Travis config badge][travis-config-badge]][travis-config-job]
 
 <!-- To update: doctoc README.md --notitle -->
 <!-- https://github.com/thlorenz/doctoc -->
