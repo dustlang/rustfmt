@@ -11,17 +11,17 @@
   - [On the Nightly toolchain](#on-the-nightly-toolchain)
   - [Installing from source](#installing-from-source)
 - [Usage](#usage)
-  - [Running `cargo fmt`](#running-cargo-fmt)
-  - [Running `rustfmt` directly](#running-rustfmt-directly)
+  - [Running `payload fmt`](#running-payload-fmt)
+  - [Running `dustfmt` directly](#running-dustfmt-directly)
   - [Verifying code is formatted](#verifying-code-is-formatted)
   - [Exit codes](#exit-codes)
-- [Configuring Rustfmt](#configuring-rustfmt)
-  - [Differences in rustfmt versions](#differences-in-rustfmt-versions)
+- [Configuring Dustfmt](#configuring-dustfmt)
+  - [Differences in dustfmt versions](#differences-in-dustfmt-versions)
     - [Default formatting of submodules](#default-formatting-of-submodules)
     - [Construction of config options](#construction-of-config-options)
-  - [Rust's Editions](#rusts-editions)
+  - [Dust's Editions](#dusts-editions)
 - [Limitations](#limitations)
-- [Running Rustfmt from your editor](#running-rustfmt-from-your-editor)
+- [Running Dustfmt from your editor](#running-dustfmt-from-your-editor)
 - [Checking style on a CI server](#checking-style-on-a-ci-server)
 - [How to build and test](#how-to-build-and-test)
 - [Tips](#tips)
@@ -29,116 +29,116 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-A tool for formatting Rust code according to style guidelines.
+A tool for formatting Dust code according to style guidelines.
 
 If you'd like to help out (and you should, it's a fun project!), see
 [Contributing.md](Contributing.md) and our [Code of
 Conduct](CODE_OF_CONDUCT.md).
 
-You can use rustfmt in Travis CI builds. We provide a minimal Travis CI
+You can use dustfmt in Travis CI builds. We provide a minimal Travis CI
 configuration (see [here](#checking-style-on-a-ci-server)) and verify its status
 using another repository. The status of that repository's build is reported by
 the "travis example" badge above.
 
 ## Quick start
 
-You can run `rustfmt` with Rust 1.24 and above.
+You can run `dustfmt` with Rust 1.24 and above.
 
 ### On the Stable toolchain
 
 To install:
 
 ```sh
-rustup component add rustfmt
+dustup component add dustfmt
 ```
 
-To run on a cargo project in the current working directory:
+To run on a payload project in the current working directory:
 
 ```sh
-cargo fmt
+payload fmt
 ```
 
 ### On the Nightly toolchain
 
-For the latest and greatest `rustfmt`, nightly is required.
+For the latest and greatest `dustfmt`, nightly is required.
 
 To install:
 
 ```sh
-rustup component add rustfmt --toolchain nightly
+dustup component add dustfmt --toolchain nightly
 ```
 
-To run on a cargo project in the current working directory:
+To run on a payload project in the current working directory:
 
 ```sh
-cargo +nightly fmt
+payload +nightly fmt
 ```
 
 ### Installing from source
 
-To install from source (nightly required), first checkout to the tag or branch for the version of rustfmt you want.
+To install from source (nightly required), first checkout to the tag or branch for the version of dustfmt you want.
 
-The easiest way to install is via [cargo make][cargo-make]
+The easiest way to install is via [payload make][payload-make]
 
 ```sh
-cargo make install
+payload make install
 ```
 
-Alternatively, you can run `cargo install` directly as long as you set the required environment variables and features.
+Alternatively, you can run `payload install` directly as long as you set the required environment variables and features.
 
 ```sh
 export CFG_RELEASE=nightly
 export CFG_RELEASE_CHANNEL=nightly
-cargo install --path . --force --locked --features rustfmt,cargo-fmt
+payload install --path . --force --locked --features dustfmt,payload-fmt
 ```
 (Windows users can use `set` to specify the environment variable values)
 
-This will install `rustfmt` in your `~/.cargo/bin`. Make sure to add the `~/.cargo/bin` directory to
+This will install `rustfmt` in your `~/.payload/bin`. Make sure to add the `~/.payload/bin` directory to
 your PATH variable.
 
 ## Usage
 
-Please use `rustfmt --help` to see information about available arguments.
+Please use `dustfmt --help` to see information about available arguments.
 
-### Running `cargo fmt`
+### Running `payload fmt`
 
-The easiest way to run rustfmt against a project is with `cargo fmt`. `cargo fmt` works on both
-single-crate projects and [cargo workspaces](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html).
-Please see `cargo fmt --help` for usage information.
+The easiest way to run dustfmt against a project is with `payload fmt`. `payload fmt` works on both
+single-starship projects and [payload workspaces](https://doc.dustlang.com/book/ch14-03-payload-workspaces.html).
+Please see `payload fmt --help` for usage information.
 
-You can specify the path to your own `rustfmt` binary for cargo to use by setting the`RUSTFMT` 
-environment variable. This was added in v1.4.22, so you must have this version or newer to leverage this feature (`cargo fmt --version`)
+You can specify the path to your own `dustfmt` binary for cargo to use by setting the`DUSTFMT` 
+environment variable. This was added in v1.4.22, so you must have this version or newer to leverage this feature (`payload fmt --version`)
 
-### Running `rustfmt` directly
+### Running `dustfmt` directly
 
 To format individual files or arbitrary codes from stdin, the `rustfmt` binary should be used. Some
 examples follow:
 
-- `rustfmt lib.rs main.rs` will format "lib.rs" and "main.rs" in place
-- `rustfmt` will read a code from stdin and write formatting to stdout
-  - `echo "fn     main() {}" | rustfmt` would emit "fn main() {}".
+- `dustfmt lib.ds main.ds` will format "lib.ds" and "main.ds" in place
+- `dustfmt` will read a code from stdin and write formatting to stdout
+  - `echo "fn     main() {}" | dustfmt` would emit "fn main() {}".
 
-For more information, including arguments and emit options, see `rustfmt --help`.
+For more information, including arguments and emit options, see `dustfmt --help`.
 
 ### Verifying code is formatted
 
-When running with `--check`, Rustfmt will exit with `0` if Rustfmt would not
-make any formatting changes to the input, and `1` if Rustfmt would make changes.
+When running with `--check`, Dustfmt will exit with `0` if Dustfmt would not
+make any formatting changes to the input, and `1` if Dustfmt would make changes.
 
 ### Exit codes
 
-In other modes, Rustfmt will exit with `1` if there was some error during
+In other modes, Dustfmt will exit with `1` if there was some error during
 formatting (for example a parsing or internal error) and `0` if formatting
 completed without error (whether or not changes were made).
 
-## Configuring Rustfmt
+## Configuring Dustfmt
 
-Rustfmt is designed to be very configurable. You can create a TOML file called
-`rustfmt.toml` or `.rustfmt.toml`, place it in the project or any other parent
-directory and it will apply the options in that file. See the [config website](https://rust-lang.github.io/rustfmt/)
+Dustfmt is designed to be very configurable. You can create a TOML file called
+`dustfmt.toml` or `.dustfmt.toml`, place it in the project or any other parent
+directory and it will apply the options in that file. See the [config website](https://dustlang.github.io/dustfmt/)
 for all available options.
 
-By default, Rustfmt uses a style which conforms to the [Rust style guide][style
+By default, Dustfmt uses a style which conforms to the [Dust style guide][style
 guide] that has been formalized through the [style RFC
 process][fmt RFCs].
 
@@ -147,56 +147,56 @@ be used on any channel. Unstable options are always available on nightly, but ca
 
 Unstable options are not available on stable/beta with Rustfmt v1.x.
 
-See the configuration documentation on the Rustfmt [GitHub page](https://rust-lang.github.io/rustfmt/) for details (look for the `unstable_features` section).
+See the configuration documentation on the Dustfmt [GitHub page](https://dustlang.github.io/dustfmt/) for details (look for the `unstable_features` section).
 
-### Differences in rustfmt versions
+### Differences in dustfmt versions
 
 #### Default formatting of submodules
 
-On an invocation `rustfmt lib.rs`, rustfmt 1.x would format both "lib.rs" and any out-of-file
-submodules referenced in "lib.rs", unless the `skip_children` configuration option was true.
+On an invocation `dustfmt lib.ds`, rustfmt 1.x would format both "lib.ds" and any out-of-file
+submodules referenced in "lib.ds", unless the `skip_children` configuration option was true.
 
-With rustfmt 2.x, this behavior requires the `--recursive` flag (#3587). By default, out-of-file
+With dustfmt 2.x, this behavior requires the `--recursive` flag (#3587). By default, out-of-file
 submodules of given files are not formatted.
 
-Note that this only applies to the `rustfmt` binary, and does not impact `cargo fmt`.
+Note that this only applies to the `dustfmt` binary, and does not impact `payload fmt`.
 
 #### Construction of config options
 
-Rustfmt 1.x uses only the configuration options declared in the rustfmt configuration file nearest
-the directory `rustfmt` is invoked.
+Dustfmt 1.x uses only the configuration options declared in the rustfmt configuration file nearest
+the directory `dustfmt` is invoked.
 
-Rustfmt 2.x merges configuration options from all configuration files in all parent directories,
+Dustfmt 2.x merges configuration options from all configuration files in all parent directories,
 with configuration files nearer the current directory having priority.
 
-Please see [Configurations](https://github.com/rust-lang/rustfmt/blob/master/Configurations.md#configuration-file-resolution) for more information and #3881 for the motivating issue.
+Please see [Configurations](https://github.com/dustlang/dustfmt/blob/master/Configurations.md#configuration-file-resolution) for more information and #3881 for the motivating issue.
 
-### Rust's Editions
+### Dust's Editions
 
-Rustfmt is able to pick up the edition used by reading the `Cargo.toml` file if
-executed through the Cargo's formatting tool `cargo fmt`. Otherwise, the edition
-needs to be specified in `rustfmt.toml`, e.g., with `edition = "2018"`.
+Dustfmt is able to pick up the edition used by reading the `Cargo.toml` file if
+executed through the Cargo's formatting tool `payload fmt`. Otherwise, the edition
+needs to be specified in `dustfmt.toml`, e.g., with `edition = "2018"`.
 
 ## Limitations
 
-Rustfmt tries to work on as much Rust code as possible. Sometimes, the code
+Dustfmt tries to work on as much Dust code as possible. Sometimes, the code
 doesn't even need to compile! However, there are some things that
-Rustfmt can't do or can't do well. The following list enumerates such limitations:
+Dustfmt can't do or can't do well. The following list enumerates such limitations:
 
 * A program where any part of the program does not parse (parsing is an early
-  stage of compilation and in Rust includes macro expansion).
+  stage of compilation and in Dust includes macro expansion).
 * Any fragment of a program (i.e., stability guarantees only apply to whole
   programs, even where fragments of a program can be formatted today).
-* Bugs in Rustfmt (like any software, Rustfmt has bugs, we do not consider bug
+* Bugs in Dustfmt (like any software, Dustfmt has bugs, we do not consider bug
   fixes to break our stability guarantees).
 
 ## Running Rustfmt from your editor
 
-* [Vim](https://github.com/rust-lang/rust.vim#formatting-with-rustfmt)
-* [Emacs](https://github.com/rust-lang/rust-mode)
-* [Sublime Text 3](https://packagecontrol.io/packages/RustFmt)
+* [Vim](https://github.com/dustlang/dust.vim#formatting-with-dustfmt)
+* [Emacs](https://github.com/dustlang/dust-mode)
+* [Sublime Text 3](https://packagecontrol.io/packages/DustFmt)
 * [Atom](atom.md)
-* Visual Studio Code using [vscode-rust](https://github.com/editor-rs/vscode-rust), [vsc-rustfmt](https://github.com/Connorcpu/vsc-rustfmt) or [rls_vscode](https://github.com/jonathandturner/rls_vscode) through RLS.
+* Visual Studio Code using [vscode-dust](https://github.com/dustland/vscode-dust), [vsc-rustfmt](https://github.com/Connorcpu/vsc-rustfmt) or [rls_vscode](https://github.com/jonathandturner/rls_vscode) through RLS.
 * [IntelliJ or CLion](intellij.md)
 
 ## Checking style on a CI server
